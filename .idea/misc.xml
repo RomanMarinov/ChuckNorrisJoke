@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/WORK_PROJECTS/ChuckNorrisJoke/app/src/main/res/drawable/button_turn_off.xml" value="0.12604166666666666" />
         <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/WORK_PROJECTS/ChuckNorrisJoke/app/src/main/res/font/amaranth.xml" value="0.25416666666666665" />
+        <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/WORK_PROJECTS/ChuckNorrisJoke/app/src/main/res/layout/activity_main.xml" value="0.22395833333333334" />
         <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/WORK_PROJECTS/ChuckNorrisJoke/app/src/main/res/layout/fragment_list.xml" value="0.22395833333333334" />
         <entry key="..\:/I_AM/PROFESSION_DEVELOPER/MY_PROJECTS/WORK_PROJECTS/ChuckNorrisJoke/app/src/main/res/layout/rv_list.xml" value="0.22395833333333334" />
       </map>

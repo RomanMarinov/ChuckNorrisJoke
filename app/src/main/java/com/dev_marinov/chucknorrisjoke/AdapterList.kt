@@ -1,6 +1,6 @@
 package com.dev_marinov.chucknorrisjoke
 
-import android.annotation.SuppressLint
+
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
-import com.dev_marinov.books.R.color.orange
+
 
 class AdapterList(val context: Context, var arrayList: ArrayList<String> = ArrayList())
     : RecyclerView.Adapter<AdapterList.ViewHolder>(){
