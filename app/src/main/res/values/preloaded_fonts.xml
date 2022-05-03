@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/amaranth</item>
+        <item>@font/bai_jamjuree_extralight</item>
+        <item>@font/baloo_thambi</item>
+        <item>@font/black_han_sans</item>
+        <item>@font/bungee_shade</item>
+        <item>@font/fontdiner_swanky</item>
+    </array>
+</resources>
