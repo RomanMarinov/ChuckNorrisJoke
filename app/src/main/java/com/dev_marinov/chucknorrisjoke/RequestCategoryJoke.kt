@@ -24,9 +24,11 @@ class RequestCategoryJoke() {
 
                 val myResponse: ArrayList<String> = myString3?.split(",") as ArrayList<String>
                 Log.e("333", "-myResponse=" + myResponse)
+
                 for (item in myResponse) {
                     (activity as MainActivity).arrayList.add(item.toString())
                 }
+
                     // интерфейс передает команду в FragmentList, что категорию мы получили
                     myInterFaceAdapterUpdate.methodMyInterFaceAdapterUpdate()
             }

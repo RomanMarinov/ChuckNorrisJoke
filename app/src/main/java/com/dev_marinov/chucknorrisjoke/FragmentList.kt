@@ -124,7 +124,7 @@ class FragmentList : Fragment() {
         val requestJoke: RequestJoke = RequestJoke()
         requestJoke.setMyInterFaceSetJoke(object : RequestJoke.MyInterFaceSetJoke{
             override fun methodMyInterFaceSetJoke(value: String) {
-                tvJoke.setText(value)
+                tvJoke.text = value
             }
         })
     }

@@ -27,6 +27,8 @@ class RequestJoke {
                     val jsonObject: JSONObject = JSONObject(responseString)
                     val value: String = jsonObject.getString("value")
 
+
+
                     // интерфейс передает шутку в FragmentList
                     myInterFaceSetJoke.methodMyInterFaceSetJoke(value)
                 }

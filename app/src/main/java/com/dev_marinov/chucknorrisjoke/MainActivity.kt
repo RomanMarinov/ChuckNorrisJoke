@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity() {
         window.navigationBarColor  = ContextCompat.getColor(this, android.R.color.black); // черный бар навигации
     }
 
-
     interface MyInterFace { // интерфейс для передачи данных из адаптера в FragmentList
         fun methodMyInterFace(myCategory: String?)
     }
