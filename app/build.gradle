@@ -56,4 +56,9 @@ dependencies {
 
     implementation "androidx.activity:activity-ktx:1.4.0"
     implementation 'androidx.fragment:fragment-ktx:1.4.1'
+
+
+    // Асинхронный поток WindowMetrics: чтобы получать уведомления от библиотеки при изменении размера окна,
+    // независимо от того, вызывает ли это изменение изменение конфигурации.
+    implementation "androidx.window:window:1.1.0-alpha02"
 }

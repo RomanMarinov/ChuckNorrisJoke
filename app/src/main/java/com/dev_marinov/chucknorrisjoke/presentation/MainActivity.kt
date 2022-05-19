@@ -1,29 +1,29 @@
-package com.dev_marinov.chucknorrisjoke
+package com.dev_marinov.chucknorrisjoke.presentation
 
-import android.animation.Animator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
 import android.view.WindowManager
-import android.view.animation.Animation
 import androidx.core.content.ContextCompat
-import com.airbnb.lottie.LottieDrawable
 import com.airbnb.lottie.LottieAnimationView
-import java.util.*
+import com.dev_marinov.chucknorrisjoke.R
 import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var arrayList: ArrayList<String> // массив для хранения категорий шуток
-    var selected_position: Int? = 6 // при первой загрзке это выбранный номер категории по умолчанию
+
     var animationView: LottieAnimationView? = null // анимация на старте
+
+    var mySavedInstanceState: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        mySavedInstanceState = savedInstanceState
 
         animationView = findViewById<LottieAnimationView>(R.id.animationView);
         arrayList = ArrayList()
@@ -38,11 +38,14 @@ class MainActivity : AppCompatActivity() {
         animationView?.cancelAnimation()
 
         val runnable2 = Runnable{ // задержка 1,5 сек перед переходом во FragmentList
+            if(mySavedInstanceState == null) {
+
             val fragmentList = FragmentList()
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
             fragmentTransaction.add(R.id.llFragList, fragmentList)
             fragmentTransaction.commit()
+            }
         }
         Handler(Looper.getMainLooper()).postDelayed(runnable2, 1500)
     }
@@ -58,15 +61,26 @@ class MainActivity : AppCompatActivity() {
         window.navigationBarColor  = ContextCompat.getColor(this, android.R.color.black); // черный бар навигации
     }
 
-    interface MyInterFace { // интерфейс для передачи данных из адаптера в FragmentList
-        fun methodMyInterFace(myCategory: String?)
-    }
-    fun setMyInterFace(myInterFace: MyInterFace) {
-        Companion.myInterFace = myInterFace
-    }
+
     companion object { // статический интерфейс
-        lateinit var myInterFace: MyInterFace
+        lateinit var myInterFaceCategoryPosWidthTextView: MyInterFaceCategoryPosWidthTextView
+        lateinit var myInterFaceWidthTextView : MyInterFaceWidthTextView
     }
+
+    interface MyInterFaceCategoryPosWidthTextView { // интерфейс для передачи данных из адаптера в FragmentList
+        fun methodMyInterFaceCategoryPosWidthTextView(myCategory: String?, viewModelSelectPos: Int, viewModelWidthTextView: Int)
+    }
+    fun setMyInterFaceCategoryPosWidthTextView(myInterFaceCategoryPosWidthTextView: MyInterFaceCategoryPosWidthTextView) {
+        Companion.myInterFaceCategoryPosWidthTextView = myInterFaceCategoryPosWidthTextView
+    }
+
+    interface MyInterFaceWidthTextView { // интерфейс для передачи данных из адаптера в FragmentList
+        fun methodMyInterFaceWidthTextView()
+    }
+    fun setMyInterFaceWidthTextViewn(myInterFaceWidthTextView: MyInterFaceWidthTextView) {
+        Companion.myInterFaceWidthTextView = myInterFaceWidthTextView
+    }
+
 
 
 }

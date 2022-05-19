@@ -7,7 +7,7 @@
     android:focusable="true"
     android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".FragmentList">
+    tools:context=".presentation.FragmentList">
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/gifImg"

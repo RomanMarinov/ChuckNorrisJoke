@@ -1,13 +1,17 @@
-package com.dev_marinov.chucknorrisjoke
+package com.dev_marinov.chucknorrisjoke.model
 
 import android.util.Log
+import com.dev_marinov.chucknorrisjoke.presentation.FragmentList
+import com.dev_marinov.chucknorrisjoke.presentation.MainActivity
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.TextHttpResponseHandler
 import cz.msebera.android.httpclient.Header
 
-class RequestCategoryJoke() {
+object RequestCategoryJoke {
 
-    fun getCategory(activity: MainActivity?) {
+    var arrayListCategory: ArrayList<String> = ArrayList()
+
+    fun getCategory() {
 
         val asyncHttpClient: AsyncHttpClient = AsyncHttpClient();
         asyncHttpClient.get("https://api.chucknorris.io/jokes/categories", null, object : TextHttpResponseHandler() {
@@ -26,25 +30,17 @@ class RequestCategoryJoke() {
                 Log.e("333", "-myResponse=" + myResponse)
 
                 for (item in myResponse) {
-                    (activity as MainActivity).arrayList.add(item.toString())
+                    arrayListCategory.add(item.toString())
                 }
 
                     // интерфейс передает команду в FragmentList, что категорию мы получили
-                    myInterFaceAdapterUpdate.methodMyInterFaceAdapterUpdate()
+                    // и надо обновить адаптер
+                    FragmentList.myInterFaceCategory.methodMyInterFaceCategory()
             }
         })
 
     }
 
-    interface MyInterFaceAdapterUpdate {
-        fun methodMyInterFaceAdapterUpdate()
-    }
-    fun setMyInterFaceAdapterUpdate(myInterFaceAdapterUpdate: MyInterFaceAdapterUpdate) {
-        RequestCategoryJoke.myInterFaceAdapterUpdate = myInterFaceAdapterUpdate
-    }
-    companion object { // статический интерфейс
-        lateinit var myInterFaceAdapterUpdate: RequestCategoryJoke.MyInterFaceAdapterUpdate
-    }
-
+    fun myCategory() = arrayListCategory
 
 }
