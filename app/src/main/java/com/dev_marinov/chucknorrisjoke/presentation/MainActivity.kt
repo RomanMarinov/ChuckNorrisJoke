@@ -13,10 +13,7 @@ import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var arrayList: ArrayList<String> // массив для хранения категорий шуток
-
     var animationView: LottieAnimationView? = null // анимация на старте
-
     var mySavedInstanceState: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +23,6 @@ class MainActivity : AppCompatActivity() {
         mySavedInstanceState = savedInstanceState
 
         animationView = findViewById<LottieAnimationView>(R.id.animationView);
-        arrayList = ArrayList()
 
         supportActionBar?.hide() // скрыть экшен бар
         setWindow() // установки окна
@@ -80,7 +76,5 @@ class MainActivity : AppCompatActivity() {
     fun setMyInterFaceWidthTextViewn(myInterFaceWidthTextView: MyInterFaceWidthTextView) {
         Companion.myInterFaceWidthTextView = myInterFaceWidthTextView
     }
-
-
 
 }

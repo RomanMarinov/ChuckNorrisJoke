@@ -33,9 +33,6 @@ class FragmentList : Fragment() {
     var myViewGroup: ViewGroup? = null // контейнер для вьюшек
     var myLayoutInflater: LayoutInflater? = null
 
-    var myWidth: Int = 0
-    var myHeight: Int = 0
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         myViewGroup = container
         myLayoutInflater = inflater
@@ -44,7 +41,6 @@ class FragmentList : Fragment() {
     }
 
     fun initInterface() : View {
-
         val view: View
         // если уже есть надутый макет, удалить его.
         if (myViewGroup != null) {
@@ -67,7 +63,6 @@ class FragmentList : Fragment() {
         return view
     }
 
-
     // метод для установки recyclerview, GridLayoutManager и AdapterListHome
     fun myRecyclerLayoutManagerAdapter(view: View) {
 
@@ -83,10 +78,8 @@ class FragmentList : Fragment() {
         recyclerView.layoutManager = linearLayoutManager
 
         adapterListCategory = AdapterListCategory(
-            context,
             viewModelSelectPosition,
             viewModelWidthTextViewCategory,
-            linearLayoutManager!!
         )
         recyclerView.adapter = adapterListCategory
 
@@ -209,6 +202,5 @@ class FragmentList : Fragment() {
     fun setMyInterFaceJoke(myInterFaceJoke: MyInterFaceJoke) {
         Companion.myInterFaceJoke = myInterFaceJoke
     }
-
 
 }

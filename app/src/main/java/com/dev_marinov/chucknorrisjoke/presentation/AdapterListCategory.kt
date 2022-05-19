@@ -16,34 +16,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dev_marinov.chucknorrisjoke.R
 
 
-class AdapterListCategory(
-    context: Context?,
-    var viewModelSelectPosition: ViewModelSelectPosition,
-    var viewModelWidthTextViewCategory: ViewModelWidthTextViewCategory,
-    var linearLayoutManager: LinearLayoutManager,
-
+class AdapterListCategory(var viewModelSelectPosition: ViewModelSelectPosition,
+    var viewModelWidthTextViewCategory: ViewModelWidthTextViewCategory
     ) : RecyclerView.Adapter<AdapterListCategory.ViewHolder>(){
 
-
-
     var arrayList: ArrayList<String> = ArrayList()
-    var selected_position = 6
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.rv_list, parent, false)
         return ViewHolder(view)
     }
 
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.tvCategory.text = arrayList[position]
 
-
-
         holder.cardView.setOnClickListener(object : View.OnClickListener{ // клик по элементу
             override fun onClick(view: View?) {
-
-
 
                     // запись позиции и обновление
                 // Нижняя строка похожа на проверку безопасности, потому что иногда держатель может быть нулевым,
@@ -55,8 +43,6 @@ class AdapterListCategory(
                 viewModelSelectPosition.selectPosition = holder.adapterPosition
                 notifyItemChanged(viewModelSelectPosition.selectPosition)
 
-
-
                 Log.e("333","=holder.tvCategory.width="+holder.tvCategory.width)
 
                 viewModelWidthTextViewCategory.widthTextViewCategory = holder.tvCategory.width
@@ -67,13 +53,7 @@ class AdapterListCategory(
                     viewModelWidthTextViewCategory.widthTextViewCategory
                 ) // передается строка с категорией например "sport"
 
-
-
-
-
                 Log.e("333","=viewModelSelectPosition.selectPosition="+viewModelSelectPosition.selectPosition)
-
-
             }
         })
 
@@ -83,10 +63,6 @@ class AdapterListCategory(
 
         holder.cardView.setBackgroundResource(if (viewModelSelectPosition.selectPosition
             == position) R.drawable.button_turn_off else Color.TRANSPARENT)
-
-
-
-
 
     }
 
