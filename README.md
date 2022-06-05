@@ -8,8 +8,10 @@
 
 - viewModel,<br/>
 - mvvm, <br/>
+- coroutine, <br/>
+- databinding, <br/>
 - animation gif,<br/>
-- asyncHttpClient<br/>
+- retrofit<br/>
 
 ## Скрины экрана 
 
