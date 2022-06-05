@@ -10,8 +10,10 @@
 - mvvm, <br/>
 - coroutine, <br/>
 - databinding, <br/>
+- retrofit, <br/>
 - animation gif,<br/>
-- retrofit<br/>
+- fragment, <br/>
+- recyclerView, adapter
 
 ## Скрины экрана 
 
