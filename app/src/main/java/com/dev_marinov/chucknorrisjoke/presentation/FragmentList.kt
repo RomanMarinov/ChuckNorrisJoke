@@ -9,25 +9,27 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.dev_marinov.chucknorrisjoke.R
-import com.dev_marinov.chucknorrisjoke.model.RequestJoke
 import androidx.window.layout.WindowMetricsCalculator
+import com.dev_marinov.chucknorrisjoke.R
+import com.dev_marinov.chucknorrisjoke.databinding.FragmentListBinding
 
 
 class FragmentList : Fragment() {
 
-    lateinit var viewModelListCategory: ViewModelListCategory
-    lateinit var viewModelSelectPosition: ViewModelSelectPosition
-    lateinit var viewModelWidthTextViewCategory: ViewModelWidthTextViewCategory
+    private lateinit var binding: FragmentListBinding // биндинг для фрагмента
 
-    lateinit var recyclerView: RecyclerView
+    private lateinit var viewModelListCategory: ViewModelListCategory // для сохранения массива категорий
+    private lateinit var viewModelJoke: ViewModelJoke // для сохранения шутки
+    private lateinit var viewModelSelectPosition: ViewModelSelectPosition // для сохранения позиции клика
+    private lateinit var viewModelWidthTextViewCategory: ViewModelWidthTextViewCategory // для сохранения ширины view
+
     lateinit var adapterListCategory: AdapterListCategory // адапетр для категорий шуток
-    lateinit var tvJoke: TextView // шутка
+
     var linearLayoutManager: LinearLayoutManager? = null
 
     var myViewGroup: ViewGroup? = null // контейнер для вьюшек
@@ -37,11 +39,10 @@ class FragmentList : Fragment() {
         myViewGroup = container
         myLayoutInflater = inflater
 
-        return initInterface()
+        return initInterFace()
     }
 
-    fun initInterface() : View {
-        val view: View
+    private fun initInterFace() : View {
         // если уже есть надутый макет, удалить его.
         if (myViewGroup != null) {
             myViewGroup!!.removeAllViewsInLayout() // отличается от removeAllView
@@ -50,157 +51,95 @@ class FragmentList : Fragment() {
         // получить экран ориентации
         val orientation = requireActivity().resources.configuration.orientation
         // раздуть соответствующий макет в зависимости от ориентации экрана
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            view = layoutInflater.inflate(R.layout.fragment_list, myViewGroup, false)
-
-            myRecyclerLayoutManagerAdapter(view)
+        binding = if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            DataBindingUtil.inflate(myLayoutInflater!!, R.layout.fragment_list, myViewGroup, false)
         } else {
-            view = layoutInflater.inflate(R.layout.fragment_list_horizontal, myViewGroup, false)
-
-            myRecyclerLayoutManagerAdapter(view)
+            DataBindingUtil.inflate(myLayoutInflater!!, R.layout.fragment_list, myViewGroup, false)
         }
+        // метод работы с views, adapter, recycler
+            myRecyclerLayoutManagerAdapter()
 
-        return view
+        return binding.root
     }
 
-    // метод для установки recyclerview, GridLayoutManager и AdapterListHome
-    fun myRecyclerLayoutManagerAdapter(view: View) {
+    private fun myRecyclerLayoutManagerAdapter() {
 
         viewModelListCategory = ViewModelProvider(this)[ViewModelListCategory::class.java]
+        viewModelJoke = ViewModelProvider(this)[ViewModelJoke::class.java]
         viewModelSelectPosition = ViewModelProvider(this)[ViewModelSelectPosition::class.java]
         viewModelWidthTextViewCategory = ViewModelProvider(this)[ViewModelWidthTextViewCategory::class.java]
 
-        recyclerView = view.findViewById(R.id.recyclerView)
-        tvJoke = view.findViewById(R.id.tvJoke)
-
-        // linearLayoutManager - шахматный порядок
-        linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.layoutManager = linearLayoutManager
+        binding.tvTitle.text = resources.getString(R.string.choose)
 
         adapterListCategory = AdapterListCategory(
             viewModelSelectPosition,
-            viewModelWidthTextViewCategory,
-        )
-        recyclerView.adapter = adapterListCategory
+            viewModelWidthTextViewCategory)
+        linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        // подписываем адаптер на изменение списка
-        viewModelListCategory.getArrayCategory().observe(requireActivity(), Observer {
-            it.let { adapterListCategory.refreshUsers(it) } // it - обновленный список
-        })
+        binding.recyclerView.apply{
+            layoutManager = linearLayoutManager
+            adapter = adapterListCategory
+        }
 
-        setMyInterFaceCategory(object :FragmentList.MyInterFaceCategory {
-            override fun methodMyInterFaceCategory() {
-                adapterListCategory.notifyDataSetChanged()
+        // слушатель кликов из адаптера чтобы запустить сетевой запрос и получить шутку joke
+        adapterListCategory.setOnItemClickListener(object : AdapterListCategory.onItemClickListener {
+            override fun onItemClick(position: Int, clickCategory: String, widthTextViewCategory: Int) {
+
+                viewModelJoke.makeApiCall(clickCategory)// api запрос шутки
+
+                windowsMetrics(widthTextViewCategory) // смещение view на центр экрана
             }
         })
 
-        // СРАБОТАЕТ ПРИ ПЕРВОЙ ЗАГРУЗКЕ МАКЕТА ДЛЯ УСТАНОВКИ УЖЕ ЗАРАНЕЕ ВЫБРАННОЙ КАТЕГОРИИ ПО ЦЕНТРУ
-        val runnable2 = Runnable { // установка последнего элемента в главном потоке, задержка 0,7сек
+        // наблюдатель для получения категорий ответа от сети
+        viewModelListCategory.getArrayCategoryObserver().observe(requireActivity(),
+            { arrayList ->
+                adapterListCategory.refreshUsers(arrayList) // передача в адаптер массива
+                adapterListCategory!!.notifyDataSetChanged() // обновление адаптера
+
+                // после получения массива категорий от наблюдателя, запускаем другой сетевой запрос на шутку
+                    viewModelJoke.makeApiCall(viewModelListCategory.getArrayCategoryObserver()
+                        .value!![viewModelSelectPosition.selectPosition])
+                    // метод для смещения view на центр экрана
+                    windowsMetrics(viewModelWidthTextViewCategory.widthTextViewCategory)
+            })
+
+        viewModelListCategory.makeApiCall() // запускаем сетевой зарпос на получение категорий
+
+        // наблюдатель для получения шутки ответа от сети
+        viewModelJoke.getJokeObserver().observe(requireActivity(), object : Observer<String> {
+            override fun onChanged(t: String?) {
+                Log.e("333","=viewModelListCategory t=" + t)
+                binding.tvJoke.text = t
+            }
+        })
+
+    }
+
+    // метод получения размеров view чтобы переместить на центр экрана
+    fun windowsMetrics(widthTextViewCategory: Int) {
+        // получить офсет ширина экрана (можно тут получить) / 2 мнус длина текстВью / 2
+        val windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(activity!!)
+        val currentBounds = windowMetrics.bounds // E.g. [0 0 1350 1800]
+        val width = currentBounds.width()
+
+        // поскольку получить ширину TextViewCategory нельзя до ее появления на экране в холдере
+        // я узнал ее ширину заранее (213 установил ее в ViewModelWidthTextViewCategory)
+        // (эта позиция по умолчанию, установлена во ViewModelSelectPosition)
+        val offset = (width / 2) - (widthTextViewCategory / 2)
+        Log.e("333", "-widthTextViewCategory=" + widthTextViewCategory)
+
+        // установка textView по центру  и позицию
+        // использую viewModelSelectPos и viewModelWidthTextView
+        val runnable1 = Runnable {
             try {
                 requireActivity().runOnUiThread {
-                    cycle(viewModelSelectPosition.selectPosition,
-                        viewModelWidthTextViewCategory.widthTextViewCategory)
+                    linearLayoutManager!!.scrollToPositionWithOffset(viewModelSelectPosition.selectPosition,offset)
                 }
-            } catch (e: Exception) {
-                Log.e("333", "-try catch FragmentHome 1-$e")
+            } catch (e: java.lang.Exception) {
+                Log.e("333", "-try catch FragmentList 1-$e")
             }
         }
-        Handler(Looper.getMainLooper()).postDelayed(runnable2, 700)
-
-        // интерфейс который срабатывает в адаптере по клику на эелемент выбора (т.е. категории шуток)
-        // интерфейс, который передет одну выбранную категорию string (сетевой запрос)
-        (context as MainActivity).setMyInterFaceCategoryPosWidthTextView(object : MainActivity.MyInterFaceCategoryPosWidthTextView{
-            override fun methodMyInterFaceCategoryPosWidthTextView(myCategory: String?,
-                                                            viewModelSelectPos: Int,
-                                                            viewModelWidthTextView: Int) {
-                // после делаем сетевой запрос с полученной стрингой
-                val requestJoke = RequestJoke
-                requestJoke.getJoke(myCategory!!)
-
-                // получить офсет ширина экрана (можно тут получить) / 2 мнус длина текстВью / 2
-                val windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(activity!!)
-                val currentBounds = windowMetrics.bounds // E.g. [0 0 1350 1800]
-                val width = currentBounds.width()
-                val offset = (width / 2) - (viewModelWidthTextViewCategory.widthTextViewCategory / 2)
-
-                // установка textView по центру (когда пользователь кликает на категорию) и позицию
-                // использую viewModelSelectPos и viewModelWidthTextView
-                val runnable1 = Runnable {
-                    try {
-                        requireActivity().runOnUiThread {
-                            linearLayoutManager!!.scrollToPositionWithOffset(viewModelSelectPosition.selectPosition,offset)
-                        }
-                    } catch (e: java.lang.Exception) {
-                        Log.e("333", "-try catch FragmentList 1-$e")
-                    }
-                }
-                Handler(Looper.getMainLooper()).postDelayed(runnable1, 500)
-            }
-        })
-
-        //  и после получения ответа на запрос шутки по категори сработает этот интерфейс, который установит текст шутки
-        setMyInterFaceJoke(object : FragmentList.MyInterFaceJoke {
-            override fun methodMyInterFaceJoke(jokeString: String) {
-                tvJoke.text = jokeString
-            }
-        })
-
+        Handler(Looper.getMainLooper()).postDelayed(runnable1, 300)
     }
-    // ТОЛЬКО ДЛЯ ПЕРВОЙ ЗАГРУЗКИ МАКЕТА
-    // цикл для получения категории по position клик из адаптера
-    // кога первый раз запускаем экран, viewModelSelectPosition (по умолчанию 6 позиция)
-    fun cycle(selected_position: Int, widthTextViewCategory: Int) {
-        for (item in viewModelListCategory.getArrayCategory().toString().indices)
-            if (selected_position == item) {
-
-                // после делаем сетевой запрос с полученной стрингой
-                val requestJoke = RequestJoke
-                requestJoke.getJoke(viewModelListCategory.getArrayCategory().value!![selected_position]) // передача строки категории для получния шутки этой категории
-
-                // получить офсет ширина экрана (можно тут получить) / 2 мнус длина текстВью / 2
-                val windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(activity!!)
-                val currentBounds = windowMetrics.bounds // E.g. [0 0 1350 1800]
-                val width = currentBounds.width()
-
-                // поскольку получить ширину TextViewCategory нельзя до ее появления на экране в холдере
-                // я узнал ее ширину заранее (213 установил ее в ViewModelWidthTextViewCategory)
-                // (эта позиция по умолчанию, установлена во ViewModelSelectPosition)
-                val offset = (width / 2) - (widthTextViewCategory / 2)
-                Log.e("333", "-widthTextViewCategory=" + widthTextViewCategory)
-
-                // установка textView по центру  и позицию
-                // использую viewModelSelectPos и viewModelWidthTextView
-                val runnable1 = Runnable {
-                    try {
-                        requireActivity().runOnUiThread {
-                            linearLayoutManager!!.scrollToPositionWithOffset(viewModelSelectPosition.selectPosition,offset)
-                        }
-                    } catch (e: java.lang.Exception) {
-                        Log.e("333", "-try catch FragmentList 1-$e")
-                    }
-                }
-                Handler(Looper.getMainLooper()).postDelayed(runnable1, 500)
-            }
-    }
-
-
-    companion object{
-        lateinit var myInterFaceCategory: MyInterFaceCategory
-        lateinit var myInterFaceJoke: MyInterFaceJoke
-    }
-    // интерфейс для работы с FragmentPlayers
-    interface MyInterFaceCategory{
-        fun methodMyInterFaceCategory()
-    }
-    fun setMyInterFaceCategory(myInterFaceCategory: MyInterFaceCategory) {
-        Companion.myInterFaceCategory = myInterFaceCategory
-    }
-    // интерфейс для работы с FragmentPlayers
-    interface MyInterFaceJoke{
-        fun methodMyInterFaceJoke(jokeString: String)
-    }
-    fun setMyInterFaceJoke(myInterFaceJoke: MyInterFaceJoke) {
-        Companion.myInterFaceJoke = myInterFaceJoke
-    }
-
 }

@@ -4,34 +4,39 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import com.airbnb.lottie.LottieAnimationView
 import com.dev_marinov.chucknorrisjoke.R
+import com.dev_marinov.chucknorrisjoke.databinding.ActivityMainBinding
 import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
 
-    var animationView: LottieAnimationView? = null // анимация на старте
+    private lateinit var binding: ActivityMainBinding
     var mySavedInstanceState: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        Log.e("333","=MainActivity=")
         mySavedInstanceState = savedInstanceState
 
-        animationView = findViewById<LottieAnimationView>(R.id.animationView);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+//        animationView = findViewById<LottieAnimationView>(R.id.animationView);
 
         supportActionBar?.hide() // скрыть экшен бар
         setWindow() // установки окна
 
         val runnable1 = Runnable{ // анимация шарики при старте
-            animationView?.playAnimation()
+            binding.animationView.playAnimation()
         }
         Handler(Looper.getMainLooper()).postDelayed(runnable1, 0)
-        animationView?.cancelAnimation()
+        binding.animationView.cancelAnimation()
 
         val runnable2 = Runnable{ // задержка 1,5 сек перед переходом во FragmentList
             if(mySavedInstanceState == null) {
@@ -46,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed(runnable2, 1500)
     }
 
-    fun setWindow() {
+    private fun setWindow() {
         val window = window
         // FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS Флаг, указывающий, что это Окно отвечает за отрисовку фона для системных полос.
         // Если установлено, системные панели отображаются с прозрачным фоном, а соответствующие области в этом окне заполняются
@@ -55,26 +60,6 @@ class MainActivity : AppCompatActivity() {
 
         window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent); // прозрачный статус бар
         window.navigationBarColor  = ContextCompat.getColor(this, android.R.color.black); // черный бар навигации
-    }
-
-
-    companion object { // статический интерфейс
-        lateinit var myInterFaceCategoryPosWidthTextView: MyInterFaceCategoryPosWidthTextView
-        lateinit var myInterFaceWidthTextView : MyInterFaceWidthTextView
-    }
-
-    interface MyInterFaceCategoryPosWidthTextView { // интерфейс для передачи данных из адаптера в FragmentList
-        fun methodMyInterFaceCategoryPosWidthTextView(myCategory: String?, viewModelSelectPos: Int, viewModelWidthTextView: Int)
-    }
-    fun setMyInterFaceCategoryPosWidthTextView(myInterFaceCategoryPosWidthTextView: MyInterFaceCategoryPosWidthTextView) {
-        Companion.myInterFaceCategoryPosWidthTextView = myInterFaceCategoryPosWidthTextView
-    }
-
-    interface MyInterFaceWidthTextView { // интерфейс для передачи данных из адаптера в FragmentList
-        fun methodMyInterFaceWidthTextView()
-    }
-    fun setMyInterFaceWidthTextViewn(myInterFaceWidthTextView: MyInterFaceWidthTextView) {
-        Companion.myInterFaceWidthTextView = myInterFaceWidthTextView
     }
 
 }
