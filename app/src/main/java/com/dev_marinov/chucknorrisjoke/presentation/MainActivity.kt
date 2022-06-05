@@ -21,13 +21,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
         Log.e("333","=MainActivity=")
         mySavedInstanceState = savedInstanceState
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-//        animationView = findViewById<LottieAnimationView>(R.id.animationView);
 
         supportActionBar?.hide() // скрыть экшен бар
         setWindow() // установки окна
