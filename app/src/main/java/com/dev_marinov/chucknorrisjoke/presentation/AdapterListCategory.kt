@@ -13,9 +13,9 @@ class AdapterListCategory(
     var viewModelWidthTextViewCategory: ViewModelWidthTextViewCategory
 ) : RecyclerView.Adapter<AdapterListCategory.ViewHolder>(){
 
-    var arrayList: ArrayList<String> = ArrayList() // массив для хранения категорий
+    private var arrayList: ArrayList<String> = ArrayList() // массив для хранения категорий
 
-    lateinit var mListener: onItemClickListener // слушатель кликов для нажатия на кн категорий
+    private lateinit var mListener: onItemClickListener // слушатель кликов для нажатия на кн категорий
 
     interface onItemClickListener {
         fun onItemClick(position: Int, clickCategory: String, widthTextViewCategory: Int)
@@ -45,7 +45,7 @@ class AdapterListCategory(
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(val binding: RvListBinding, listener: onItemClickListener) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: RvListBinding, listener: onItemClickListener) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: String, position: Int){
             binding.listItem = item // заполняем tv_category данными
