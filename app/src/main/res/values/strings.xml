@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ChuckNorrisJoke</string>
+
+    <string name="choose">Choose a category of Chuck Norris joke</string>
+
+    <string name="no">no</string>
+    <string name="yes">yes</string>
+    <string name="do_you_wish">Do you wish to exit ?</string>
+</resources>
