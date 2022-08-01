@@ -26,6 +26,7 @@ class ExitDialogFragment : DialogFragment() {
 
     private fun setOnClickListeners() {
         binding.btNo.setOnClickListener { dismiss() }
-        binding.btYes.setOnClickListener { requireActivity().finishAndRemoveTask() }
+        binding.btYes.setOnClickListener {
+            requireActivity().finishAndRemoveTask() }
     }
 }

@@ -56,8 +56,6 @@ class CategoryListAdapter(
                 )
             }
 
-            // Метод executePendingBindings используется, чтобы биндинг не откладывался,
-            // а выполнился как можно быстрее. Это критично в случае с RecyclerView.
             binding.executePendingBindings()
         }
 
