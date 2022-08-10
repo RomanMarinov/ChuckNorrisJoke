@@ -9,14 +9,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_marinov.chucknorrisjoke.R
 import com.dev_marinov.chucknorrisjoke.databinding.ItemCategoryBinding
-import com.dev_marinov.chucknorrisjoke.presentation.model.SelectableCategory
+import com.dev_marinov.chucknorrisjoke.domain.Category
+import com.dev_marinov.chucknorrisjoke.presentation.model.SelectableItem
+import kotlin.collections.ArrayList
 
 
 class CategoryListAdapter(
-    private val onItemClick: (position: Int, category: SelectableCategory, width: Int) -> Unit
-) : ListAdapter<SelectableCategory, CategoryListAdapter.CategoryViewHolder>(CategoryDiffUtilCallback()) {
+    private val onItemClick: (position: Int, category: SelectableItem<Category>, width: Int) -> Unit
+) : ListAdapter<SelectableItem<Category>, CategoryListAdapter.CategoryViewHolder>(CategoryDiffUtilCallback()) {
 
-    private var categories: List<SelectableCategory> = ArrayList()
+    private var categories: List<SelectableItem<Category>> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -30,18 +32,20 @@ class CategoryListAdapter(
 
     override fun getItemCount() = categories.size
 
-    override fun submitList(list: MutableList<SelectableCategory>?) {
+    override fun submitList(list: MutableList<SelectableItem<Category>>?) {
         super.submitList(list)
         list?.let { this.categories = it.toList() }
     }
 
     inner class CategoryViewHolder(
         private val binding: ItemCategoryBinding,
-        private val onItemClick: (position: Int, clickCategory: SelectableCategory, widthTextViewCategory: Int) -> Unit
+        private val onItemClick: (position: Int, clickCategory: SelectableItem<Category>, widthTextViewCategory: Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(category: SelectableCategory) {
+        fun bind(category: SelectableItem<Category>) {
             binding.category = category
+
+//            binding.tvCategory.text = category.item.name
 
             val textColorResId = getTextColorResId(category.isSelected)
             val backGroundResId = getBackgroundResId(category.isSelected)
@@ -72,17 +76,17 @@ class CategoryListAdapter(
         }
     }
 
-    class CategoryDiffUtilCallback : DiffUtil.ItemCallback<SelectableCategory>() {
+    class CategoryDiffUtilCallback : DiffUtil.ItemCallback<SelectableItem<Category>>() {
         override fun areItemsTheSame(
-            oldItem: SelectableCategory,
-            newItem: SelectableCategory
+            oldItem: SelectableItem<Category>,
+            newItem: SelectableItem<Category>
         ): Boolean {
             return oldItem == newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: SelectableCategory,
-            newItem: SelectableCategory
+            oldItem: SelectableItem<Category>,
+            newItem: SelectableItem<Category>
         ): Boolean {
             return oldItem.isSelected == newItem.isSelected
         }
